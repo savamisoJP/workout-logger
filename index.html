@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -15,121 +16,125 @@
   button { cursor: pointer; }
   .screen { display: none; } .screen.active { display: block; }
 
-  /* Header */
-  #header { padding: 52px 20px 0; border-bottom: 1px solid #1E1E1E; position: sticky; top: 0; background: #0A0A0A; z-index: 10; }
-  #header-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
-  #header-sub { font-size: 10px; letter-spacing: 4px; color: #555; margin-bottom: 4px; }
-  #header-title { font-size: 28px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
-  #header-title span { color: #FF6B6B; margin-left: 4px; }
-  #vol-label { font-size: 10px; color: #444; letter-spacing: 2px; }
-  #vol-value { font-size: 18px; font-weight: 700; color: #FF6B6B; text-align: right; }
-  #save-indicator { font-size: 9px; color: #555; letter-spacing: 1px; text-align: right; min-height: 14px; }
+/* Header */
+#header { padding: 52px 20px 0; border-bottom: 1px solid #1E1E1E; position: sticky; top: 0; background: #0A0A0A; z-index: 10; }
+#header-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
+#header-sub { font-size: 10px; letter-spacing: 4px; color: #555; margin-bottom: 4px; }
+#header-title { font-size: 28px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+#header-title span { color: #FF6B6B; margin-left: 4px; }
+#vol-label { font-size: 10px; color: #444; letter-spacing: 2px; }
+#vol-value { font-size: 18px; font-weight: 700; color: #FF6B6B; text-align: right; }
+#save-indicator { font-size: 9px; color: #555; letter-spacing: 1px; text-align: right; min-height: 14px; }
 
-  /* Tabs */
-  #tabs { display: flex; }
-  .tab-btn { flex: 1; padding: 10px 0; background: none; border: none; border-bottom: 2px solid transparent; color: #444; font-size: 10px; letter-spacing: 2px; transition: color 0.2s; }
-  .tab-btn.active { border-bottom-color: #FF6B6B; color: #FF6B6B; }
-  .tab-badge { margin-left: 4px; background: #FF6B6B; color: #0A0A0A; border-radius: 10px; padding: 0 5px; font-size: 9px; }
+/* Tabs */
+#tabs { display: flex; }
+.tab-btn { flex: 1; padding: 10px 0; background: none; border: none; border-bottom: 2px solid transparent; color: #444; font-size: 10px; letter-spacing: 2px; transition: color 0.2s; }
+.tab-btn.active { border-bottom-color: #FF6B6B; color: #FF6B6B; }
+.tab-badge { margin-left: 4px; background: #FF6B6B; color: #0A0A0A; border-radius: 10px; padding: 0 5px; font-size: 9px; }
 
-  /* Content */
-  #content { padding: 20px; padding-bottom: 40px; }
+/* Content */
+#content { padding: 20px; padding-bottom: 40px; }
 
-  /* Section label */
-  .sec-label { font-size: 10px; letter-spacing: 3px; color: #555; margin-bottom: 10px; }
+/* Section label */
+.sec-label { font-size: 10px; letter-spacing: 3px; color: #555; margin-bottom: 10px; }
 
-  /* Category grid */
-  .cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }
-  .cat-btn { padding: 10px 8px; position: relative; background: #111; border: 1px solid #222; color: #444; font-size: 12px; border-radius: 2px; transition: all 0.15s; }
-  .cat-btn.active { }
-  .cat-icon { font-size: 16px; margin-bottom: 2px; }
-  .cat-badge { position: absolute; top: 4px; right: 4px; border-radius: 8px; padding: 0 4px; font-size: 8px; font-weight: bold; color: #0A0A0A; }
+/* Category grid */
+.cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }
+.cat-btn { padding: 10px 8px; position: relative; background: #111; border: 1px solid #222; color: #444; font-size: 12px; border-radius: 2px; transition: all 0.15s; }
+.cat-btn.active { }
+.cat-icon { font-size: 16px; margin-bottom: 2px; }
+.cat-badge { position: absolute; top: 4px; right: 4px; border-radius: 8px; padding: 0 4px; font-size: 8px; font-weight: bold; color: #0A0A0A; }
 
-  /* Exercise list */
-  .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .ex-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
-  .ex-btn { padding: 12px 14px; background: #0D0D0D; border: 1px solid #1A1A1A; color: #555; font-size: 13px; text-align: left; border-radius: 2px; display: flex; align-items: center; gap: 10px; transition: all 0.15s; width: 100%; }
-  .ex-btn.active { background: #1A1A1A; color: #EAEAEA; }
-  .ex-arrow { display: none; } .ex-btn.active .ex-arrow { display: inline; }
-  .my-badge { font-size: 8px; letter-spacing: 1px; border: 1px solid; padding: 1px 5px; border-radius: 2px; opacity: 0.7; margin-left: auto; flex-shrink: 0; }
+/* Exercise list */
+.ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.ex-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.ex-btn { padding: 12px 14px; background: #0D0D0D; border: 1px solid #1A1A1A; color: #555; font-size: 13px; text-align: left; border-radius: 2px; display: flex; align-items: center; gap: 10px; transition: all 0.15s; width: 100%; }
+.ex-btn.active { background: #1A1A1A; color: #EAEAEA; }
+.ex-arrow { display: none; } .ex-btn.active .ex-arrow { display: inline; }
+.my-badge { font-size: 8px; letter-spacing: 1px; border: 1px solid; padding: 1px 5px; border-radius: 2px; opacity: 0.7; margin-left: auto; flex-shrink: 0; }
 
-  /* Sets */
-  .set-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .set-num { font-size: 12px; color: #333; width: 24px; text-align: center; flex-shrink: 0; }
-  .set-field { flex: 1; position: relative; }
-  .set-input { width: 100%; padding: 11px 36px 11px 12px; background: #111; border: 1px solid #222; color: #EAEAEA; font-size: 14px; border-radius: 2px; outline: none; }
-  .set-unit { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10px; color: #444; }
-  .set-del { width: 36px; height: 36px; background: none; border: 1px solid #222; color: #444; font-size: 14px; flex-shrink: 0; border-radius: 2px; }
-  #add-set-btn { width: 100%; margin-top: 8px; padding: 10px; background: none; border: 1px dashed #2A2A2A; color: #444; font-size: 11px; letter-spacing: 2px; border-radius: 2px; }
-  #note-input { width: 100%; padding: 12px; background: #111; border: 1px solid #222; color: #888; font-size: 12px; resize: none; border-radius: 2px; outline: none; margin-bottom: 20px; }
-  #save-btn { width: 100%; padding: 16px; background: #FF6B6B; border: none; color: #0A0A0A; font-size: 13px; font-weight: 900; letter-spacing: 4px; border-radius: 2px; }
+/* Sets */
+.set-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.set-num { font-size: 12px; color: #333; width: 24px; text-align: center; flex-shrink: 0; }
+.set-field { flex: 1; position: relative; }
+.set-input { width: 100%; padding: 11px 36px 11px 12px; background: #111; border: 1px solid #222; color: #EAEAEA; font-size: 14px; border-radius: 2px; outline: none; }
+.set-unit { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10px; color: #444; }
+.set-del { width: 36px; height: 36px; background: none; border: 1px solid #222; color: #444; font-size: 14px; flex-shrink: 0; border-radius: 2px; }
+.unit-toggle { display: flex; border: 1px solid #2A2A2A; border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+.unit-toggle-btn { padding: 0 8px; height: 36px; background: none; border: none; color: #444; font-size: 10px; letter-spacing: 1px; transition: all 0.15s; }
+.unit-toggle-btn.active { background: #2A2A2A; color: #EAEAEA; }
+#add-set-btn { width: 100%; margin-top: 8px; padding: 10px; background: none; border: 1px dashed #2A2A2A; color: #444; font-size: 11px; letter-spacing: 2px; border-radius: 2px; }
+#note-input { width: 100%; padding: 12px; background: #111; border: 1px solid #222; color: #888; font-size: 12px; resize: none; border-radius: 2px; outline: none; margin-bottom: 20px; }
+#save-btn { width: 100%; padding: 16px; background: #FF6B6B; border: none; color: #0A0A0A; font-size: 13px; font-weight: 900; letter-spacing: 4px; border-radius: 2px; }
 
-  /* History */
-  .day-label { font-size: 10px; letter-spacing: 3px; color: #444; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #1A1A1A; }
-  .log-card { background: #0D0D0D; border: 1px solid #1A1A1A; margin-bottom: 8px; border-radius: 2px; overflow: hidden; }
-  .log-card-head { padding: 14px; display: flex; align-items: center; gap: 12px; }
-  .log-cat-icon { font-size: 18px; }
-  .log-name { font-size: 13px; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
-  .log-meta { font-size: 10px; color: #444; letter-spacing: 1px; }
-  .log-toggle { color: #333; font-size: 10px; margin-left: auto; flex-shrink: 0; }
-  .log-detail { border-top: 1px solid #1A1A1A; padding: 14px; display: none; }
-  .log-detail.open { display: block; }
-  .log-set-row { display: flex; gap: 16px; margin-bottom: 6px; font-size: 12px; color: #888; }
-  .log-note { margin-top: 8px; font-size: 11px; color: #444; font-style: italic; }
-  .log-del-btn { margin-top: 12px; padding: 6px 12px; background: none; border: 1px solid #2A2A2A; color: #444; font-size: 10px; letter-spacing: 2px; border-radius: 2px; }
+/* History */
+.day-label { font-size: 10px; letter-spacing: 3px; color: #444; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #1A1A1A; }
+.log-card { background: #0D0D0D; border: 1px solid #1A1A1A; margin-bottom: 8px; border-radius: 2px; overflow: hidden; }
+.log-card-head { padding: 14px; display: flex; align-items: center; gap: 12px; }
+.log-cat-icon { font-size: 18px; }
+.log-name { font-size: 13px; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+.log-meta { font-size: 10px; color: #444; letter-spacing: 1px; }
+.log-toggle { color: #333; font-size: 10px; margin-left: auto; flex-shrink: 0; }
+.log-detail { border-top: 1px solid #1A1A1A; padding: 14px; display: none; }
+.log-detail.open { display: block; }
+.log-set-row { display: flex; gap: 16px; margin-bottom: 6px; font-size: 12px; color: #888; }
+.log-note { margin-top: 8px; font-size: 11px; color: #444; font-style: italic; }
+.log-del-btn { margin-top: 12px; padding: 6px 12px; background: none; border: 1px solid #2A2A2A; color: #444; font-size: 10px; letter-spacing: 2px; border-radius: 2px; }
 
-  /* Stats */
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-  .stat-card { background: #0D0D0D; border: 1px solid #1A1A1A; padding: 14px; border-radius: 2px; }
-  .stat-label { font-size: 9px; color: #444; letter-spacing: 2px; margin-bottom: 6px; }
-  .stat-value { font-size: 18px; font-weight: 700; color: #FF6B6B; }
-  .pr-row { display: flex; align-items: center; padding: 12px 14px; margin-bottom: 6px; background: #0D0D0D; border: 1px solid #1A1A1A; border-radius: 2px; }
-  .pr-info { flex: 1; }
-  .pr-name { font-size: 12px; margin-bottom: 2px; }
-  .pr-date { font-size: 10px; color: #444; }
-  .pr-weight { font-size: 18px; font-weight: 700; }
+/* Stats */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.stat-card { background: #0D0D0D; border: 1px solid #1A1A1A; padding: 14px; border-radius: 2px; }
+.stat-label { font-size: 9px; color: #444; letter-spacing: 2px; margin-bottom: 6px; }
+.stat-value { font-size: 18px; font-weight: 700; color: #FF6B6B; }
+.pr-row { display: flex; align-items: center; padding: 12px 14px; margin-bottom: 6px; background: #0D0D0D; border: 1px solid #1A1A1A; border-radius: 2px; }
+.pr-info { flex: 1; }
+.pr-name { font-size: 12px; margin-bottom: 2px; }
+.pr-date { font-size: 10px; color: #444; }
+.pr-weight { font-size: 18px; font-weight: 700; }
 
-  /* Custom tab */
-  .custom-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .cat-tab-row { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
-  .cat-tab-btn { padding: 6px 12px; flex-shrink: 0; background: #0D0D0D; border: 1px solid #1A1A1A; color: #444; font-size: 11px; border-radius: 2px; }
-  .custom-item { display: flex; align-items: center; padding: 12px 14px; margin-bottom: 6px; background: #0D0D0D; border: 1px solid #1A1A1A; border-radius: 2px; }
-  .drag-handle { color: #333; font-size: 14px; margin-right: 12px; cursor: grab; }
-  .custom-name { flex: 1; font-size: 13px; }
-  .custom-action-btn { padding: 4px 10px; background: none; font-size: 9px; letter-spacing: 1px; border-radius: 2px; margin-right: 6px; }
-  .custom-del-btn { padding: 4px 8px; background: none; border: 1px solid #2A2A2A; color: #444; font-size: 12px; border-radius: 2px; }
+/* Custom tab */
+.custom-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.cat-tab-row { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+.cat-tab-btn { padding: 6px 12px; flex-shrink: 0; background: #0D0D0D; border: 1px solid #1A1A1A; color: #444; font-size: 11px; border-radius: 2px; }
+.custom-item { display: flex; align-items: center; padding: 12px 14px; margin-bottom: 6px; background: #0D0D0D; border: 1px solid #1A1A1A; border-radius: 2px; }
+.drag-handle { color: #333; font-size: 14px; margin-right: 12px; cursor: grab; }
+.custom-name { flex: 1; font-size: 13px; }
+.custom-action-btn { padding: 4px 10px; background: none; font-size: 9px; letter-spacing: 1px; border-radius: 2px; margin-right: 6px; }
+.custom-del-btn { padding: 4px 8px; background: none; border: 1px solid #2A2A2A; color: #444; font-size: 12px; border-radius: 2px; }
 
-  /* Buttons shared */
-  .add-btn { padding: 6px 14px; background: #FF6B6B; border: none; color: #0A0A0A; font-size: 10px; font-weight: 700; letter-spacing: 2px; border-radius: 2px; }
-  .outline-btn { padding: 4px 10px; background: none; font-size: 10px; letter-spacing: 2px; border-radius: 2px; }
+/* Buttons shared */
+.add-btn { padding: 6px 14px; background: #FF6B6B; border: none; color: #0A0A0A; font-size: 10px; font-weight: 700; letter-spacing: 2px; border-radius: 2px; }
+.outline-btn { padding: 4px 10px; background: none; font-size: 10px; letter-spacing: 2px; border-radius: 2px; }
 
-  /* Modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; display: none; }
-  .modal-overlay.open { display: flex; }
-  .modal-bottom { width: 100%; background: #111; border-top: 1px solid #2A2A2A; padding: 24px 20px 40px; margin-top: auto; }
-  .modal-center { width: 100%; max-width: 320px; background: #111; border: 1px solid #2A2A2A; padding: 24px; border-radius: 2px; margin: auto; }
-  .modal-title { font-size: 11px; letter-spacing: 3px; color: #555; margin-bottom: 18px; }
-  .modal-sub { font-size: 11px; color: #333; margin-bottom: 18px; }
-  .field-label { font-size: 10px; color: #444; letter-spacing: 2px; margin-bottom: 8px; }
-  .modal-input { width: 100%; padding: 11px 12px; background: #111; border: 1px solid #222; color: #EAEAEA; font-size: 13px; border-radius: 2px; outline: none; margin-bottom: 14px; }
-  .modal-btn-row { display: flex; gap: 10px; margin-top: 6px; }
-  .modal-cancel { flex: 1; padding: 14px; background: none; border: 1px solid #2A2A2A; color: #444; font-size: 12px; letter-spacing: 2px; border-radius: 2px; }
-  .modal-confirm { flex: 2; padding: 14px; background: #FF6B6B; border: none; color: #0A0A0A; font-size: 12px; font-weight: 900; letter-spacing: 3px; border-radius: 2px; }
-  .modal-danger { flex: 1; padding: 12px; background: #2A1010; border: 1px solid #FF4444; color: #FF4444; font-size: 11px; font-weight: 700; border-radius: 2px; }
-  .modal-cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }
-  .modal-cat-btn { padding: 10px 8px; background: #0D0D0D; border: 1px solid #222; color: #444; font-size: 12px; border-radius: 2px; }
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; display: none; }
+.modal-overlay.open { display: flex; }
+.modal-bottom { width: 100%; background: #111; border-top: 1px solid #2A2A2A; padding: 24px 20px 40px; margin-top: auto; }
+.modal-center { width: 100%; max-width: 320px; background: #111; border: 1px solid #2A2A2A; padding: 24px; border-radius: 2px; margin: auto; }
+.modal-title { font-size: 11px; letter-spacing: 3px; color: #555; margin-bottom: 18px; }
+.modal-sub { font-size: 11px; color: #333; margin-bottom: 18px; }
+.field-label { font-size: 10px; color: #444; letter-spacing: 2px; margin-bottom: 8px; }
+.modal-input { width: 100%; padding: 11px 12px; background: #111; border: 1px solid #222; color: #EAEAEA; font-size: 13px; border-radius: 2px; outline: none; margin-bottom: 14px; }
+.modal-btn-row { display: flex; gap: 10px; margin-top: 6px; }
+.modal-cancel { flex: 1; padding: 14px; background: none; border: 1px solid #2A2A2A; color: #444; font-size: 12px; letter-spacing: 2px; border-radius: 2px; }
+.modal-confirm { flex: 2; padding: 14px; background: #FF6B6B; border: none; color: #0A0A0A; font-size: 12px; font-weight: 900; letter-spacing: 3px; border-radius: 2px; }
+.modal-danger { flex: 1; padding: 12px; background: #2A1010; border: 1px solid #FF4444; color: #FF4444; font-size: 11px; font-weight: 700; border-radius: 2px; }
+.modal-cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }
+.modal-cat-btn { padding: 10px 8px; background: #0D0D0D; border: 1px solid #222; color: #444; font-size: 12px; border-radius: 2px; }
 
-  /* Toast */
-  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #FF6B6B; color: #0A0A0A; padding: 10px 24px; font-size: 12px; font-weight: 700; letter-spacing: 2px; border-radius: 2px; z-index: 999; white-space: nowrap; display: none; }
+/* Toast */
+#toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #FF6B6B; color: #0A0A0A; padding: 10px 24px; font-size: 12px; font-weight: 700; letter-spacing: 2px; border-radius: 2px; z-index: 999; white-space: nowrap; display: none; }
 
-  /* Empty */
-  .empty { text-align: center; color: #333; padding: 60px 0; font-size: 13px; letter-spacing: 2px; }
-  .empty-sub { font-size: 11px; color: #2A2A2A; margin-top: 6px; }
+/* Empty */
+.empty { text-align: center; color: #333; padding: 60px 0; font-size: 13px; letter-spacing: 2px; }
+.empty-sub { font-size: 11px; color: #2A2A2A; margin-top: 6px; }
 
-  /* Loading */
-  #loading { position: fixed; inset: 0; background: #0A0A0A; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; }
-  #loading .l1 { font-size: 10px; letter-spacing: 4px; color: #555; margin-bottom: 16px; }
-  #loading .l2 { font-size: 11px; letter-spacing: 3px; color: #333; }
+/* Loading */
+#loading { position: fixed; inset: 0; background: #0A0A0A; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; }
+#loading .l1 { font-size: 10px; letter-spacing: 4px; color: #555; margin-bottom: 16px; }
+#loading .l2 { font-size: 11px; letter-spacing: 3px; color: #333; }
 </style>
+
 </head>
 <body>
 
@@ -161,6 +166,7 @@
 <div id="content">
 
   <!-- LOG -->
+
   <div id="tab-log" class="screen active">
     <div class="sec-label">BODY PART</div>
     <div class="cat-grid" id="cat-grid"></div>
@@ -177,11 +183,13 @@
   </div>
 
   <!-- HISTORY -->
+
   <div id="tab-history" class="screen">
     <div id="history-list"></div>
   </div>
 
   <!-- STATS -->
+
   <div id="tab-stats" class="screen">
     <div class="sec-label">OVERVIEW</div>
     <div class="stat-grid" id="stat-grid"></div>
@@ -190,6 +198,7 @@
   </div>
 
   <!-- CUSTOM -->
+
   <div id="tab-custom" class="screen">
     <div class="custom-top">
       <div class="sec-label" style="margin-bottom:0">MY EXERCISES</div>
@@ -202,9 +211,11 @@
 </div>
 
 <!-- Toast -->
+
 <div id="toast"></div>
 
 <!-- Add Modal -->
+
 <div class="modal-overlay" id="modal-add" onclick="if(event.target===this)closeModal('add')">
   <div class="modal-bottom">
     <div class="modal-title">NEW EXERCISE</div>
@@ -220,6 +231,7 @@
 </div>
 
 <!-- Rename Modal -->
+
 <div class="modal-overlay" id="modal-rename" onclick="if(event.target===this)closeModal('rename')">
   <div class="modal-bottom">
     <div class="modal-title">RENAME EXERCISE</div>
@@ -234,6 +246,7 @@
 </div>
 
 <!-- Delete Modal -->
+
 <div class="modal-overlay" id="modal-delete" style="align-items:center;justify-content:center">
   <div class="modal-center">
     <div class="modal-title">CONFIRM DELETE</div>
@@ -254,6 +267,11 @@ const SUPABASE_URL = "https://wemuxigmrrhjvgbhynur.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlbXV4aWdtcnJoanZnYmh5bnVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNDU1ODcsImV4cCI6MjA5MzYyMTU4N30.MDL0krdn14oLmzZtxjNHnzXCEEjER_bt5v4Ziw6KG-g";
 const USER_ID = "yu-workout-user"; // 固定ユーザーID（個人利用のため）
 
+const LBS_TO_KG = 0.453592;
+const KG_TO_LBS = 2.20462;
+function toKg(val, unit)  { return unit==="lbs" ? parseFloat(val)*LBS_TO_KG : parseFloat(val); }
+function fmtWeight(kg, unit) { return unit==="lbs" ? (kg*KG_TO_LBS).toFixed(1) : kg % 1===0 ? kg.toFixed(0) : kg.toFixed(1); }
+
 // ═══════════════════════════════════════════════════
 // DEFAULT DATA
 // ═══════════════════════════════════════════════════
@@ -273,7 +291,7 @@ let logs = [];
 let custom = {}; // { chest: ["マシンフライ", ...], ... }
 let selCat = "chest";
 let selEx  = CATS.chest.exercises[0];
-let sets   = [{ weight:"", reps:"" }];
+let sets   = [{ weight:"", reps:"", unit:"kg" }];
 let activeTab = "log";
 let customTabCat = "chest";
 let addModalForCustomTab = false;
@@ -391,13 +409,16 @@ function renderSets() {
       <div class="set-num">${String(i+1).padStart(2,"0")}</div>
       <div class="set-field">
         <input class="set-input" type="number" placeholder="0.0" value="${set.weight}"
-          oninput="sets[${i}].weight=this.value" style="font-family:'Courier New',monospace">
-        <span class="set-unit">kg</span>
+          oninput="sets[${i}].weight=this.value" style="font-family:'Courier New',monospace;padding-right:10px">
       </div>
       <div class="set-field">
         <input class="set-input" type="number" placeholder="0" value="${set.reps}"
-          oninput="sets[${i}].reps=this.value" style="font-family:'Courier New',monospace">
+          oninput="sets[${i}].reps=this.value" style="font-family:'Courier New',monospace;padding-right:10px">
         <span class="set-unit">rep</span>
+      </div>
+      <div class="unit-toggle">
+        <button class="unit-toggle-btn${set.unit==="kg"?" active":""}" onclick="setUnit(${i},'kg')">kg</button>
+        <button class="unit-toggle-btn${set.unit==="lbs"?" active":""}" onclick="setUnit(${i},'lbs')">lbs</button>
       </div>
       ${sets.length>1?`<button class="set-del" onclick="removeSet(${i})">×</button>`:""}
     </div>
@@ -417,6 +438,8 @@ function renderHistory() {
         const cat = CATS[log.category] || Object.values(CATS)[0];
         const maxW = Math.max(...log.sets.map(s=>parseFloat(s.weight)||0));
         const totR = log.sets.reduce((s,set)=>s+(parseInt(set.reps)||0),0);
+        const hasLbs = log.sets.some(s=>s.unit==="lbs");
+        const maxDisplay = hasLbs ? (maxW*KG_TO_LBS).toFixed(1)+"lbs" : maxW.toFixed(1)+"kg";
         return `<div class="log-card">
           <div class="log-card-head" onclick="toggleLog('${log.id}')">
             <span class="log-cat-icon" style="color:${cat.color}">${cat.icon}</span>
@@ -424,18 +447,22 @@ function renderHistory() {
               <div class="log-name">${log.exercise}
                 ${log.isCustom?`<span class="my-badge" style="color:${cat.color};border-color:${cat.color}">MY</span>`:""}
               </div>
-              <div class="log-meta">${log.sets.length}SET · MAX ${maxW}kg · ${totR}reps</div>
+              <div class="log-meta">${log.sets.length}SET · MAX ${maxDisplay} · ${totR}reps</div>
             </div>
             <span class="log-toggle" id="toggle-${log.id}">▼</span>
           </div>
           <div class="log-detail" id="detail-${log.id}">
-            ${log.sets.map((set,i)=>`
-              <div class="log-set-row">
+            ${log.sets.map((set,i)=>{
+              const dw = set.displayWeight || fmtWeight(parseFloat(set.weight), set.unit||"kg");
+              const du = set.unit||"kg";
+              const vol = (parseFloat(set.weight)*(parseInt(set.reps)||0)).toFixed(0);
+              return `<div class="log-set-row">
                 <span style="color:#333">SET ${i+1}</span>
-                <span style="color:${cat.color}">${set.weight}kg</span>
+                <span style="color:${cat.color}">${dw}${du}</span>
                 <span>×</span><span>${set.reps}rep</span>
-                <span style="color:#333;margin-left:auto">vol: ${(parseFloat(set.weight)*parseInt(set.reps)).toFixed(0)}kg</span>
-              </div>`).join("")}
+                <span style="color:#333;margin-left:auto">vol: ${vol}kg</span>
+              </div>`;
+            }).join("")}
             ${log.note?`<div class="log-note">"${log.note}"</div>`:""}
             <button class="log-del-btn" onclick="deleteLog('${log.id}')">削除</button>
           </div>
@@ -467,7 +494,7 @@ function renderStats() {
   logs.forEach(l => {
     const mx = l.sets.reduce((m,s)=>parseFloat(s.weight)>parseFloat(m.weight||0)?s:m,{});
     if (!maxByEx[l.exercise] || parseFloat(mx.weight)>parseFloat(maxByEx[l.exercise].weight))
-      maxByEx[l.exercise] = {...mx, date:l.date, category:l.category};
+      maxByEx[l.exercise] = {...mx, date:l.date, category:l.category, unit:mx.unit||"kg"};
   });
 
   const prEl = document.getElementById("pr-list");
@@ -476,13 +503,16 @@ function renderStats() {
   }
   prEl.innerHTML = Object.entries(maxByEx).map(([ex, data]) => {
     const cat = CATS[data.category] || Object.values(CATS)[0];
+    const dispW = data.unit==="lbs"
+      ? (parseFloat(data.weight)*KG_TO_LBS).toFixed(1)+"lbs"
+      : parseFloat(data.weight).toFixed(1)+"kg";
     return `<div class="pr-row">
       <span style="color:${cat.color};font-size:16px;margin-right:12px">${cat.icon}</span>
       <div class="pr-info">
         <div class="pr-name">${ex}</div>
         <div class="pr-date">${new Date(data.date).toLocaleDateString("ja-JP")} · ${data.reps}rep</div>
       </div>
-      <div class="pr-weight" style="color:${cat.color}">${data.weight}kg</div>
+      <div class="pr-weight" style="color:${cat.color}">${dispW}</div>
     </div>`;
   }).join("");
 }
@@ -572,7 +602,13 @@ function selectEx(ex) {
 }
 
 function addSet() {
-  sets.push({ weight:"", reps:"" });
+  const lastUnit = sets.length ? sets[sets.length-1].unit : "kg";
+  sets.push({ weight:"", reps:"", unit:lastUnit });
+  renderSets();
+}
+
+function setUnit(i, unit) {
+  sets[i].unit = unit;
   renderSets();
 }
 
@@ -588,11 +624,16 @@ function saveWorkout() {
     id: Date.now().toString(),
     date: new Date().toISOString(),
     category: selCat, exercise: selEx,
-    sets: valid.map(s => ({...s})),
+    sets: valid.map(s => ({
+      weight: toKg(s.weight, s.unit).toFixed(2),  // 内部保存はkg統一
+      displayWeight: s.weight,                      // 入力値そのまま
+      unit: s.unit,                                 // 入力時の単位
+      reps: s.reps,
+    })),
     note: document.getElementById("note-input").value,
     isCustom: (custom[selCat]||[]).includes(selEx),
   });
-  sets = [{ weight:"", reps:"" }];
+  sets = [{ weight:"", reps:"", unit: valid[valid.length-1]?.unit || "kg" }];
   document.getElementById("note-input").value = "";
   scheduleSave();
   renderAll();
@@ -743,5 +784,6 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 // ═══════════════════════════════════════════════════
 init();
 </script>
+
 </body>
 </html>
