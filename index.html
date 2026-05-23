@@ -132,11 +132,12 @@ button { cursor:pointer; }
 .modal-cat-btn { padding:10px 8px; background:#0D0D0D; border:1px solid #222; color:#444; font-size:12px; border-radius:2px; }
 .modal-unit-row { display:flex; gap:8px; margin-top:8px; }
 .modal-unit-btn { flex:1; padding:10px; background:#0D0D0D; border:1px solid #222; color:#444; font-size:12px; border-radius:2px; }
-.edit-set-row { display:flex; gap:8px; align-items:center; padding:10px 0; border-bottom:1px solid #1A1A1A; }
+.edit-set-row { display:flex; flex-direction:column; gap:6px; padding:10px 0; border-bottom:1px solid #1A1A1A; }
+.edit-set-row-top { display:flex; gap:8px; align-items:center; }
 .edit-set-num { font-size:11px; color:#444; width:32px; flex-shrink:0; }
 .edit-set-input { flex:1; padding:8px; background:#0D0D0D; border:1px solid #222; color:#EAEAEA; font-size:13px; border-radius:2px; outline:none; text-align:center; }
-.edit-unit-toggle { display:flex; border:1px solid #2A2A2A; border-radius:2px; overflow:hidden; }
-.edit-unit-btn { padding:0 7px; height:34px; background:none; border:none; color:#444; font-size:10px; }
+.edit-unit-toggle { display:flex; border:1px solid #2A2A2A; border-radius:2px; overflow:hidden; margin-left:40px; }
+.edit-unit-btn { flex:1; padding:7px 14px; background:none; border:none; color:#444; font-size:11px; letter-spacing:1px; }
 .edit-unit-btn.active { background:#2A2A2A; color:#EAEAEA; }
 
 /* Toast */
@@ -680,20 +681,26 @@ function openEditSet(logId, e) {
 
 function renderEditSetRows() {
   document.getElementById("editset-rows").innerHTML = editSetData.map((set,i)=>{
-    const dw = set.displayWeight || fmtW(set.weight, set.unit||"kg");
+    const dw = set.editWeight !== undefined
+      ? set.editWeight
+      : (set.displayWeight || fmtW(set.weight, set.unit||"kg"));
+    const unit = set.unit || "kg";
     return `<div class="edit-set-row">
-      <div class="edit-set-num">SET ${i+1}</div>
-      <input class="edit-set-input" type="number" value="${dw}" oninput="editSetData[${i}].editWeight=this.value" placeholder="重量">
-      <input class="edit-set-input" type="number" value="${set.reps}" oninput="editSetData[${i}].reps=this.value" placeholder="回数" style="max-width:60px">
+      <div class="edit-set-row-top">
+        <div class="edit-set-num">SET ${i+1}</div>
+        <input class="edit-set-input" type="number" value="${dw}" oninput="editSetData[${i}].editWeight=this.value" placeholder="重量">
+        <input class="edit-set-input" type="number" value="${set.reps}" oninput="editSetData[${i}].reps=this.value" placeholder="回数" style="max-width:64px">
+      </div>
       <div class="edit-unit-toggle">
-        <button class="edit-unit-btn${(set.unit||"kg")==="kg"?" active":""}" onclick="editSetUnit(${i},'kg')">kg</button>
-        <button class="edit-unit-btn${(set.unit||"kg")==="lbs"?" active":""}" onclick="editSetUnit(${i},'lbs')">lbs</button>
+        <button class="edit-unit-btn${unit==="kg"?" active":""}" onclick="editSetUnitOnly(${i},'kg')">kg</button>
+        <button class="edit-unit-btn${unit==="lbs"?" active":""}" onclick="editSetUnitOnly(${i},'lbs')">lbs</button>
       </div>
     </div>`;
   }).join("");
 }
 
-function editSetUnit(i, unit) {
+function editSetUnitOnly(i, unit) {
+  // just change the unit label, keep the number as-is
   editSetData[i].unit = unit;
   renderEditSetRows();
 }
