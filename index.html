@@ -389,14 +389,25 @@ function setSaveInd(m) { document.getElementById("save-indicator").textContent =
 // ═══════════════════════════════════════
 async function init() {
   try {
-    const [l, o] = await Promise.all([dbGet("logs"), dbGet("exOrder")]);
+    const [l, o, oldCustom] = await Promise.all([dbGet("logs"), dbGet("exOrder"), dbGet("custom")]);
     if (l) logs = l;
     if (o) exOrder = o;
-    // Ensure any new defaults are present in exOrder
+
+    // migrate old "custom" key -> exOrder
+    if (oldCustom && typeof oldCustom === "object") {
+      for (const cat of Object.keys(CATS)) {
+        const customs = oldCustom[cat] || [];
+        if (!exOrder[cat]) exOrder[cat] = [...CATS[cat].defaults];
+        for (const name of customs) {
+          if (!exOrder[cat].includes(name)) exOrder[cat].push(name);
+        }
+      }
+    }
+
+    // ensure all defaults exist
     for (const cat of Object.keys(CATS)) {
       if (!exOrder[cat]) exOrder[cat] = [...CATS[cat].defaults];
       else {
-        // append defaults not yet in list
         for (const d of CATS[cat].defaults) {
           if (!exOrder[cat].includes(d)) exOrder[cat].push(d);
         }
