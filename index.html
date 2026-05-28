@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WORKOUT">
+<title>WORKOUT LOGGER</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { background:#0A0A0A; color:#EAEAEA; font-family:'Courier New',monospace; min-height:100vh; }
+input,textarea,button { font-family:'Courier New',monospace; }
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; }
+button { cursor:pointer; }
+.screen { display:none; } .screen.active { display:block; }
+#header { padding:52px 20px 0; border-bottom:1px solid #1E1E1E; position:sticky; top:0; background:#0A0A0A; z-index:10; }
+#header-top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:16px; }
+#header-sub { font-size:10px; letter-spacing:4px; color:#555; margin-bottom:4px; }
+#header-title { font-size:28px; font-weight:900; letter-spacing:-1px; line-height:1; }
+#header-title span { color:#FF6B6B; margin-left:4px; }
+#vol-label { font-size:10px; color:#444; letter-spacing:2px; }
+#vol-value { font-size:18px; font-weight:700; color:#FF6B6B; text-align:right; }
+#save-indicator { font-size:9px; color:#555; letter-spacing:1px; text-align:right; min-height:14px; }
+#tabs { display:flex; }
+.tab-btn { flex:1; padding:10px 0; background:none; border:none; border-bottom:2px solid transparent; color:#444; font-size:10px; letter-spacing:2px; transition:color 0.2s; }
+.tab-btn.active { border-bottom-color:#FF6B6B; color:#FF6B6B; }
+.tab-badge { margin-left:4px; background:#FF6B6B; color:#0A0A0A; border-radius:10px; padding:0 5px; font-size:9px; }
+#content { padding:20px; padding-bottom:60px; }
+.sec-label { font-size:10px; letter-spacing:3px; color:#555; margin-bottom:10px; }
+.cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:20px; }
+.cat-btn { padding:10px 8px; position:relative; background:#111; border:1px solid #222; color:#444; font-size:12px; border-radius:2px; transition:all 0.15s; }
+.cat-icon { font-size:16px; margin-bottom:2px; }
+.cat-badge { position:absolute; top:4px; right:4px; border-radius:8px; padding:0 4px; font-size:8px; font-weight:bold; color:#0A0A0A; }
+.ex-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.ex-list { display:flex; flex-direction:column; gap:6px; margin-bottom:20px; }
+.ex-btn { padding:12px 14px; background:#0D0D0D; border:1px solid #1A1A1A; color:#555; font-size:13px; text-align:left; border-radius:2px; display:flex; align-items:center; gap:10px; transition:all 0.15s; width:100%; }
+.ex-btn.active { background:#1A1A1A; color:#EAEAEA; }
+.ex-arrow { display:none; } .ex-btn.active .ex-arrow { display:inline; }
+.my-badge { font-size:8px; letter-spacing:1px; border:1px solid; padding:1px 5px; border-radius:2px; opacity:0.7; margin-left:auto; flex-shrink:0; }
+.set-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+.set-num { font-size:12px; color:#333; width:22px; text-align:center; flex-shrink:0; }
+.set-field { flex:1; }
+.set-input { width:100%; padding:10px 8px; background:#111; border:1px solid #222; color:#EAEAEA; font-size:14px; border-radius:2px; outline:none; text-align:center; }
+.set-del { width:32px; height:38px; background:none; border:1px solid #222; color:#444; font-size:14px; flex-shrink:0; border-radius:2px; }
+.unit-toggle { display:flex; border:1px solid #2A2A2A; border-radius:2px; overflow:hidden; flex-shrink:0; }
+.unit-toggle-btn { padding:0 7px; height:38px; background:none; border:none; color:#444; font-size:10px; letter-spacing:1px; transition:all 0.15s; }
+.unit-toggle-btn.active { background:#2A2A2A; color:#EAEAEA; }
+#add-set-btn { width:100%; margin-top:8px; padding:10px; background:none; border:1px dashed #2A2A2A; color:#444; font-size:11px; letter-spacing:2px; border-radius:2px; }
+#note-input { width:100%; padding:12px; background:#111; border:1px solid #222; color:#888; font-size:12px; resize:none; border-radius:2px; outline:none; margin-bottom:20px; }
+#save-btn { width:100%; padding:16px; background:#FF6B6B; border:none; color:#0A0A0A; font-size:13px; font-weight:900; letter-spacing:4px; border-radius:2px; }
+#timer-fab { position:fixed; bottom:24px; right:20px; width:56px; height:56px; background:#FF6B6B; border:none; border-radius:50%; font-size:22px; color:#0A0A0A; z-index:50; box-shadow:0 4px 16px rgba(255,107,107,0.4); display:flex; align-items:center; justify-content:center; }
+#timer-panel { position:fixed; bottom:0; left:0; right:0; background:#111; border-top:1px solid #2A2A2A; padding:20px; z-index:60; transform:translateY(100%); transition:transform 0.3s; }
+#timer-panel.open { transform:translateY(0); }
+#timer-display { font-size:52px; font-weight:900; text-align:center; letter-spacing:4px; color:#FF6B6B; margin:12px 0; }
+#timer-display.done { color:#4ECDC4; }
+.timer-presets { display:flex; gap:8px; justify-content:center; margin-bottom:16px; }
+.timer-preset-btn { padding:6px 14px; background:none; border:1px solid #2A2A2A; color:#555; font-size:11px; letter-spacing:1px; border-radius:2px; }
+.timer-preset-btn.active { border-color:#FF6B6B; color:#FF6B6B; }
+.timer-controls { display:flex; gap:10px; }
+.timer-ctrl-btn { flex:1; padding:12px; background:none; border:1px solid #2A2A2A; color:#EAEAEA; font-size:12px; letter-spacing:2px; border-radius:2px; }
+.timer-ctrl-btn.primary { background:#FF6B6B; border-color:#FF6B6B; color:#0A0A0A; font-weight:900; }
+.timer-close { position:absolute; top:16px; right:16px; background:none; border:none; color:#444; font-size:18px; }
+.day-label { font-size:10px; letter-spacing:3px; color:#444; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #1A1A1A; }
+.log-card { background:#0D0D0D; border:1px solid #1A1A1A; margin-bottom:8px; border-radius:2px; overflow:hidden; }
+.log-card-head { padding:14px; display:flex; align-items:center; gap:12px; }
+.log-cat-icon { font-size:18px; }
+.log-name { font-size:13px; margin-bottom:2px; display:flex; align-items:center; gap:6px; }
+.log-meta { font-size:10px; color:#444; letter-spacing:1px; }
+.log-toggle { color:#333; font-size:10px; margin-left:auto; flex-shrink:0; }
+.log-detail { border-top:1px solid #1A1A1A; padding:14px; display:none; }
+.log-detail.open { display:block; }
+.log-set-row { display:flex; gap:12px; margin-bottom:6px; font-size:12px; color:#888; align-items:center; }
+.log-edit-btn { margin-left:auto; padding:2px 8px; background:none; border:1px solid #2A2A2A; color:#555; font-size:9px; letter-spacing:1px; border-radius:2px; flex-shrink:0; }
+.log-note { margin-top:8px; font-size:11px; color:#444; font-style:italic; }
+.log-del-btn { margin-top:12px; padding:6px 12px; background:none; border:1px solid #2A2A2A; color:#444; font-size:10px; letter-spacing:2px; border-radius:2px; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.stat-card { background:#0D0D0D; border:1px solid #1A1A1A; padding:14px; border-radius:2px; }
+.stat-label { font-size:9px; color:#444; letter-spacing:2px; margin-bottom:6px; }
+.stat-value { font-size:18px; font-weight:700; color:#FF6B6B; }
+.pr-row { display:flex; align-items:center; padding:12px 14px; margin-bottom:6px; background:#0D0D0D; border:1px solid #1A1A1A; border-radius:2px; }
+.pr-info { flex:1; }
+.pr-name { font-size:12px; margin-bottom:2px; }
+.pr-date { font-size:10px; color:#444; }
+.pr-weight { font-size:18px; font-weight:700; }
+.custom-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.cat-tab-row { display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px; }
+.cat-tab-btn { padding:6px 12px; flex-shrink:0; background:#0D0D0D; border:1px solid #1A1A1A; color:#444; font-size:11px; border-radius:2px; }
+.custom-item { display:flex; align-items:center; padding:12px 14px; margin-bottom:6px; background:#0D0D0D; border:1px solid #1A1A1A; border-radius:2px; user-select:none; }
+.drag-handle { color:#333; font-size:14px; margin-right:12px; cursor:grab; }
+.custom-name { flex:1; font-size:13px; }
+.custom-action-btn { padding:4px 8px; background:none; font-size:9px; letter-spacing:1px; border-radius:2px; margin-right:4px; }
+.custom-del-btn { padding:4px 8px; background:none; border:1px solid #2A2A2A; color:#444; font-size:12px; border-radius:2px; }
+.default-tag { font-size:8px; color:#333; border:1px solid #222; padding:1px 4px; border-radius:2px; margin-right:6px; }
+.add-btn { padding:6px 14px; background:#FF6B6B; border:none; color:#0A0A0A; font-size:10px; font-weight:700; letter-spacing:2px; border-radius:2px; }
+.outline-btn { padding:4px 10px; background:none; font-size:10px; letter-spacing:2px; border-radius:2px; }
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:100; display:none; }
+.modal-overlay.open { display:flex; }
+.modal-bottom { width:100%; background:#111; border-top:1px solid #2A2A2A; padding:24px 20px 40px; margin-top:auto; }
+.modal-center { width:100%; max-width:340px; background:#111; border:1px solid #2A2A2A; padding:24px; border-radius:2px; margin:auto; }
+.modal-title { font-size:11px; letter-spacing:3px; color:#555; margin-bottom:18px; }
+.modal-sub { font-size:11px; color:#333; margin-bottom:12px; }
+.field-label { font-size:10px; color:#444; letter-spacing:2px; margin-bottom:8px; margin-top:12px; }
+.modal-input { width:100%; padding:11px 12px; background:#0D0D0D; border:1px solid #222; color:#EAEAEA; font-size:13px; border-radius:2px; outline:none; }
+.modal-btn-row { display:flex; gap:10px; margin-top:16px; }
+.modal-cancel { flex:1; padding:14px; background:none; border:1px solid #2A2A2A; color:#444; font-size:12px; letter-spacing:2px; border-radius:2px; }
+.modal-confirm { flex:2; padding:14px; background:#FF6B6B; border:none; color:#0A0A0A; font-size:12px; font-weight:900; letter-spacing:3px; border-radius:2px; }
+.modal-danger { flex:1; padding:12px; background:#2A1010; border:1px solid #FF4444; color:#FF4444; font-size:11px; font-weight:700; border-radius:2px; }
+.modal-cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px; margin-bottom:4px; }
+.modal-cat-btn { padding:10px 8px; background:#0D0D0D; border:1px solid #222; color:#444; font-size:12px; border-radius:2px; }
+.edit-set-row { display:flex; flex-direction:column; gap:6px; padding:10px 0; border-bottom:1px solid #1A1A1A; }
+.edit-set-row-top { display:flex; gap:8px; align-items:center; }
+.edit-set-num { font-size:11px; color:#444; width:32px; flex-shrink:0; }
+.edit-set-input { flex:1; padding:8px; background:#0D0D0D; border:1px solid #222; color:#EAEAEA; font-size:13px; border-radius:2px; outline:none; text-align:center; }
+.edit-unit-toggle { display:flex; border:1px solid #2A2A2A; border-radius:2px; overflow:hidden; margin-left:40px; }
+.edit-unit-btn { flex:1; padding:7px 14px; background:none; border:none; color:#444; font-size:11px; letter-spacing:1px; }
+.edit-unit-btn.active { background:#2A2A2A; color:#EAEAEA; }
+#toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:#FF6B6B; color:#0A0A0A; padding:10px 24px; font-size:12px; font-weight:700; letter-spacing:2px; border-radius:2px; z-index:999; white-space:nowrap; display:none; }
+.empty { text-align:center; color:#333; padding:60px 0; font-size:13px; letter-spacing:2px; }
+.empty-sub { font-size:11px; color:#2A2A2A; margin-top:6px; }
+#loading { position:fixed; inset:0; background:#0A0A0A; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200; }
+#loading .l1 { font-size:10px; letter-spacing:4px; color:#555; margin-bottom:16px; }
+#loading .l2 { font-size:11px; letter-spacing:3px; color:#333; }
+</style>
+</head>
+<body>
+<div id="loading"><div class="l1">WORKOUT LOGGER</div><div class="l2">データを読み込み中...</div></div>
+<div id="header">
+  <div id="header-top">
+    <div><div id="header-sub">WORKOUT</div><div id="header-title">LOGGER<span>_</span></div></div>
+    <div><div id="vol-label">TOTAL VOLUME</div><div id="vol-value">0kg</div><div id="save-indicator"></div></div>
+  </div>
+  <div id="tabs">
+    <button class="tab-btn active" data-tab="log">記録</button>
+    <button class="tab-btn" data-tab="history">履歴</button>
+    <button class="tab-btn" data-tab="stats">分析</button>
+    <button class="tab-btn" data-tab="custom">種目<span id="custom-badge" class="tab-badge" style="display:none"></span></button>
+  </div>
+</div>
+<div id="content">
+  <div id="tab-log" class="screen active">
+    <div class="sec-label">BODY PART</div>
+    <div class="cat-grid" id="cat-grid"></div>
+    <div class="ex-header">
+      <div class="sec-label" style="margin-bottom:0">EXERCISE</div>
+      <button class="outline-btn" id="add-ex-btn" onclick="openAddModal()">+ 種目追加</button>
+    </div>
+    <div class="ex-list" id="ex-list"></div>
+    <div class="sec-label">SETS</div>
+    <div id="sets-container"></div>
+    <button id="add-set-btn" onclick="addSet()">+ SET追加</button>
+    <textarea id="note-input" rows="2" placeholder="メモ（任意）" style="margin-top:16px"></textarea>
+    <button id="save-btn" onclick="saveWorkout()">SAVE WORKOUT</button>
+  </div>
+  <div id="tab-history" class="screen"><div id="history-list"></div></div>
+  <div id="tab-stats" class="screen">
+    <div class="sec-label">OVERVIEW</div>
+    <div class="stat-grid" id="stat-grid"></div>
+    <div class="sec-label">MAX WEIGHT PR</div>
+    <div id="pr-list"></div>
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid #1A1A1A">
+      <div class="sec-label">CLAUDE連携</div>
+      <div style="font-size:11px;color:#444;margin-bottom:12px;line-height:1.6">ボタンをタップするとトレーニングサマリーをコピーします。<br>Claudeのチャットに貼り付けてメニュー相談に使えます。</div>
+      <button onclick="copySummaryForClaude()" style="width:100%;padding:14px;background:none;border:1px solid #FF6B6B;color:#FF6B6B;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;font-family:'Courier New',monospace">COPY FOR CLAUDE</button>
+    </div>
+  </div>
+  <div id="tab-custom" class="screen">
+    <div class="custom-top">
+      <div class="sec-label" style="margin-bottom:0">EXERCISE ORDER</div>
+      <button class="add-btn" onclick="openAddModal(true)">+ 新規追加</button>
+    </div>
+    <div class="cat-tab-row" id="custom-cat-tabs"></div>
+    <div id="custom-list"></div>
+  </div>
+</div>
+<button id="timer-fab" onclick="toggleTimer()">&#9201;</button>
+<div id="timer-panel">
+  <button class="timer-close" onclick="toggleTimer()">x</button>
+  <div style="font-size:10px;letter-spacing:3px;color:#555;margin-bottom:4px">INTERVAL TIMER</div>
+  <div id="timer-display">1:30</div>
+  <div class="timer-presets">
+    <button class="timer-preset-btn" onclick="setTimerPreset(60)">1:00</button>
+    <button class="timer-preset-btn active" onclick="setTimerPreset(90)">1:30</button>
+    <button class="timer-preset-btn" onclick="setTimerPreset(120)">2:00</button>
+    <button class="timer-preset-btn" onclick="setTimerPreset(180)">3:00</button>
+  </div>
+  <div class="timer-controls">
+    <button class="timer-ctrl-btn" onclick="resetTimer()">リセット</button>
+    <button class="timer-ctrl-btn primary" id="timer-start-btn" onclick="toggleTimerRun()">スタート</button>
+  </div>
+</div>
+<div id="toast"></div>
+<div class="modal-overlay" id="modal-add" onclick="if(event.target===this)closeModal('add')">
+  <div class="modal-bottom">
+    <div class="modal-title">NEW EXERCISE</div>
+    <div class="field-label" style="margin-top:0">種目名</div>
+    <input class="modal-input" id="add-name-input" placeholder="例：チェストプレスマシン">
+    <div class="field-label">部位</div>
+    <div class="modal-cat-grid" id="add-cat-grid"></div>
+    <div class="modal-btn-row">
+      <button class="modal-cancel" onclick="closeModal('add')">キャンセル</button>
+      <button class="modal-confirm" onclick="confirmAdd()">追加する</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-rename" onclick="if(event.target===this)closeModal('rename')">
+  <div class="modal-bottom">
+    <div class="modal-title">RENAME EXERCISE</div>
+    <div class="modal-sub" id="rename-old"></div>
+    <div class="field-label" style="margin-top:0">新しい名前</div>
+    <input class="modal-input" id="rename-input">
+    <div class="modal-btn-row">
+      <button class="modal-cancel" onclick="closeModal('rename')">キャンセル</button>
+      <button class="modal-confirm" onclick="confirmRename()">変更する</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-delete" style="align-items:center;justify-content:center">
+  <div class="modal-center">
+    <div class="modal-title">CONFIRM DELETE</div>
+    <div class="modal-sub" id="delete-name"></div>
+    <div style="font-size:11px;color:#555;margin-bottom:20px">を削除しますか？記録は残ります。</div>
+    <div class="modal-btn-row">
+      <button class="modal-cancel" onclick="closeModal('delete')">キャンセル</button>
+      <button class="modal-danger" onclick="confirmDelete()">削除</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-editset" onclick="if(event.target===this)closeModal('editset')" style="align-items:center;justify-content:center">
+  <div class="modal-center" style="max-height:80vh;overflow-y:auto">
+    <div class="modal-title">EDIT RECORD</div>
+    <div class="modal-sub" id="editset-title"></div>
+    <div id="editset-rows"></div>
+    <div class="modal-btn-row">
+      <button class="modal-cancel" onclick="closeModal('editset')">キャンセル</button>
+      <button class="modal-confirm" onclick="confirmEditSet()">保存する</button>
+    </div>
+  </div>
+</div>
+<script>
+var SB_URL = "https://wemuxigmrrhjvgbhynur.supabase.co";
+var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlbXV4aWdtcnJoanZnYmh5bnVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNDU1ODcsImV4cCI6MjA5MzYyMTU4N30.MDL0krdn14oLmzZtxjNHnzXCEEjER_bt5v4Ziw6KG-g";
+var UID = "yu-workout-user";
+var LBS_TO_KG = 0.453592;
+var KG_TO_LBS = 2.20462;
+
+var CATS = {
+  chest:     { label:"胸",   icon:"◈", color:"#FF6B6B", defaults:["ベンチプレス","インクラインプレス","ダンベルフライ","ディップス","ケーブルクロスオーバー"] },
+  back:      { label:"背中", icon:"◉", color:"#4ECDC4", defaults:["デッドリフト","懸垂","ラットプルダウン","ベントオーバーロウ","シーテッドロウ"] },
+  legs:      { label:"脚",   icon:"◆", color:"#FFE66D", defaults:["スクワット","レッグプレス","ルーマニアンデッドリフト","レッグカール","カーフレイズ"] },
+  shoulders: { label:"肩",   icon:"◇", color:"#A8E6CF", defaults:["オーバーヘッドプレス","サイドレイズ","フロントレイズ","リアデルトフライ","アップライトロウ"] },
+  arms:      { label:"腕",   icon:"◐", color:"#DDA0DD", defaults:["バーベルカール","ハンマーカール","トライセプスプッシュダウン","スカルクラッシャー","コンセントレーションカール"] },
+  core:      { label:"体幹", icon:"○", color:"#F7DC6F", defaults:["プランク","クランチ","レッグレイズ","ロシアンツイスト","アブローラー"] }
+};
+
+var logs = [];
+var exOrder = {};
+var selCat = "chest";
+var selEx = CATS.chest.defaults[0];
+var sets = [{weight:"",reps:"",unit:"kg"}];
+var customTabCat = "chest";
+var addModalFromCustom = false;
+var addModalCat = "chest";
+var renameTarget = null;
+var deleteTarget = null;
+var editSetTarget = null;
+var editSetData = [];
+var dragSrcIdx = null;
+var saveTimer = null;
+var toastTimer = null;
+var timerDuration = 90;
+var timerRemaining = 90;
+var timerRunning = false;
+var timerInterval = null;
+var timerOpen = false;
+
+function toKg(val, unit) { return unit === "lbs" ? parseFloat(val) * LBS_TO_KG : parseFloat(val); }
+function fmtW(kg, unit) {
+  if (unit === "lbs") return (parseFloat(kg) * KG_TO_LBS).toFixed(1);
+  var n = parseFloat(kg);
+  return n % 1 === 0 ? n.toFixed(0) : n.toFixed(1);
+}
+
+function allEx(cat) {
+  if (exOrder[cat] && exOrder[cat].length) return exOrder[cat];
+  return CATS[cat].defaults.slice();
+}
+function isCustomEx(cat, name) {
+  return CATS[cat].defaults.indexOf(name) === -1;
+}
+function ensureDefaults() {
+  var keys = Object.keys(CATS);
+  for (var i = 0; i < keys.length; i++) {
+    var cat = keys[i];
+    if (!exOrder[cat]) { exOrder[cat] = CATS[cat].defaults.slice(); continue; }
+    for (var j = 0; j < CATS[cat].defaults.length; j++) {
+      if (exOrder[cat].indexOf(CATS[cat].defaults[j]) === -1) exOrder[cat].push(CATS[cat].defaults[j]);
+    }
+  }
+}
+
+function dbGet(key, cb) {
+  fetch(SB_URL + "/rest/v1/workout_data?user_id=eq." + UID + "&data_key=eq." + key + "&select=value", {
+    headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }
+  }).then(function(r) { return r.json(); })
+    .then(function(rows) { cb(null, rows.length ? JSON.parse(rows[0].value) : null); })
+    .catch(function(e) { cb(e, null); });
+}
+function dbSet(key, value) {
+  fetch(SB_URL + "/rest/v1/workout_data", {
+    method: "POST",
+    headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates" },
+    body: JSON.stringify({ id: UID + ":" + key, user_id: UID, data_key: key, value: JSON.stringify(value), updated_at: new Date().toISOString() })
+  }).catch(function(e) { console.error("dbSet error", e); });
+}
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  setSaveInd("保存中...");
+  saveTimer = setTimeout(function() {
+    dbSet("logs", logs);
+    dbSet("exOrder", exOrder);
+    setSaveInd("✓ 保存済み");
+    setTimeout(function() { setSaveInd(""); }, 2000);
+  }, 800);
+}
+function setSaveInd(m) { document.getElementById("save-indicator").textContent = m; }
+
+function init() {
+  ensureDefaults();
+  document.getElementById("loading").style.display = "none";
+  renderAll();
+  var loaded = {logs: false, exOrder: false, custom: false};
+  function checkDone() {
+    if (loaded.logs && loaded.exOrder && loaded.custom) { ensureDefaults(); renderAll(); }
+  }
+  dbGet("logs", function(e, d) {
+    if (d) logs = d;
+    loaded.logs = true; checkDone();
+  });
+  dbGet("exOrder", function(e, d) {
+    if (d) exOrder = d;
+    loaded.exOrder = true; checkDone();
+  });
+  dbGet("custom", function(e, d) {
+    if (d && typeof d === "object") {
+      var keys = Object.keys(CATS);
+      for (var i = 0; i < keys.length; i++) {
+        var cat = keys[i];
+        var customs = d[cat] || [];
+        if (!exOrder[cat]) exOrder[cat] = CATS[cat].defaults.slice();
+        for (var j = 0; j < customs.length; j++) {
+          if (exOrder[cat].indexOf(customs[j]) === -1) exOrder[cat].push(customs[j]);
+        }
+      }
+    }
+    loaded.custom = true; checkDone();
+  });
+}
+
+function renderAll() {
+  renderCatGrid(); renderExList(); renderSets();
+  renderHistory(); renderStats(); renderCustomTab();
+  renderCustomCatTabs(); updateVolume(); updateCustomBadge(); updateAddExBtn();
+}
+function renderCatGrid() {
+  var html = "";
+  var keys = Object.keys(CATS);
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i]; var cat = CATS[key];
+    var cnt = allEx(key).filter(function(e) { return isCustomEx(key, e); }).length;
+    var on = key === selCat;
+    html += '<button class="cat-btn" onclick="selectCat(\'' + key + '\')" style="background:' + (on ? cat.color + "20" : "#111") + ';border-color:' + (on ? cat.color : "#222") + ';color:' + (on ? cat.color : "#444") + '">';
+    html += '<div class="cat-icon">' + cat.icon + '</div>' + cat.label;
+    if (cnt > 0) html += '<span class="cat-badge" style="background:' + cat.color + '">+' + cnt + '</span>';
+    html += '</button>';
+  }
+  document.getElementById("cat-grid").innerHTML = html;
+}
+function renderExList() {
+  var exes = allEx(selCat); var color = CATS[selCat].color; var html = "";
+  for (var i = 0; i < exes.length; i++) {
+    var ex = exes[i]; var isMy = isCustomEx(selCat, ex); var on = ex === selEx;
+    html += '<button class="ex-btn' + (on ? ' active' : '') + '" onclick="selectEx(\'' + ex.replace(/'/g, "\\'") + '\')" style="border-color:' + (on ? color : "#1A1A1A") + '">';
+    html += '<span class="ex-arrow" style="color:' + color + '">&#9658;</span>';
+    html += '<span style="flex:1">' + ex + '</span>';
+    if (isMy) html += '<span class="my-badge" style="color:' + color + ';border-color:' + color + '">MY</span>';
+    html += '</button>';
+  }
+  document.getElementById("ex-list").innerHTML = html;
+}
+function renderSets() {
+  var html = "";
+  for (var i = 0; i < sets.length; i++) {
+    var set = sets[i];
+    html += '<div class="set-row">';
+    html += '<div class="set-num">' + String(i + 1).padStart(2, "0") + '</div>';
+    html += '<div class="set-field"><input class="set-input" type="number" placeholder="0.0" value="' + set.weight + '" oninput="sets[' + i + '].weight=this.value"></div>';
+    html += '<div class="set-field"><input class="set-input" type="number" placeholder="0" value="' + set.reps + '" oninput="sets[' + i + '].reps=this.value"></div>';
+    html += '<div class="unit-toggle"><button class="unit-toggle-btn' + (set.unit === "kg" ? " active" : "") + '" onclick="setUnit(' + i + ',\'kg\')">kg</button>';
+    html += '<button class="unit-toggle-btn' + (set.unit === "lbs" ? " active" : "") + '" onclick="setUnit(' + i + ',\'lbs\')">lbs</button></div>';
+    if (sets.length > 1) html += '<button class="set-del" onclick="removeSet(' + i + ')">x</button>';
+    html += '</div>';
+  }
+  document.getElementById("sets-container").innerHTML = html;
+}
+function groupByDate(arr) {
+  var result = {};
+  for (var i = 0; i < arr.length; i++) {
+    var d = new Date(arr[i].date).toLocaleDateString("ja-JP", {year:"numeric",month:"long",day:"numeric",weekday:"short"});
+    if (!result[d]) result[d] = [];
+    result[d].push(arr[i]);
+  }
+  return result;
+}
+function renderHistory() {
+  var grouped = groupByDate(logs);
+  var el = document.getElementById("history-list");
+  var dates = Object.keys(grouped);
+  if (!dates.length) { el.innerHTML = '<div class="empty">NO RECORDS YET</div>'; return; }
+  var html = "";
+  for (var di = 0; di < dates.length; di++) {
+    var date = dates[di]; var dayLogs = grouped[date];
+    html += '<div style="margin-bottom:24px"><div class="day-label">' + date + '</div>';
+    for (var li = 0; li < dayLogs.length; li++) {
+      var log = dayLogs[li];
+      var cat = CATS[log.category] || Object.values(CATS)[0];
+      var maxW = 0;
+      for (var si = 0; si < log.sets.length; si++) { var w = parseFloat(log.sets[si].weight) || 0; if (w > maxW) maxW = w; }
+      var totR = 0; for (var si2 = 0; si2 < log.sets.length; si2++) totR += parseInt(log.sets[si2].reps) || 0;
+      var hasLbs = log.sets.some(function(s) { return s.unit === "lbs"; });
+      var maxDisp = hasLbs ? (maxW * KG_TO_LBS).toFixed(1) + "lbs" : maxW.toFixed(1) + "kg";
+      html += '<div class="log-card"><div class="log-card-head" onclick="toggleLog(\'' + log.id + '\')">';
+      html += '<span class="log-cat-icon" style="color:' + cat.color + '">' + cat.icon + '</span>';
+      html += '<div style="flex:1"><div class="log-name">' + log.exercise;
+      if (isCustomEx(log.category, log.exercise)) html += '<span class="my-badge" style="color:' + cat.color + ';border-color:' + cat.color + '">MY</span>';
+      html += '</div><div class="log-meta">' + log.sets.length + 'SET · MAX ' + maxDisp + ' · ' + totR + 'reps</div></div>';
+      html += '<span class="log-toggle" id="toggle-' + log.id + '">&#9660;</span></div>';
+      html += '<div class="log-detail" id="detail-' + log.id + '">';
+      for (var si3 = 0; si3 < log.sets.length; si3++) {
+        var s = log.sets[si3];
+        var dw = s.displayWeight || fmtW(s.weight, s.unit || "kg");
+        var du = s.unit || "kg";
+        var vol = (parseFloat(s.weight) * (parseInt(s.reps) || 0)).toFixed(0);
+        html += '<div class="log-set-row"><span style="color:#333">SET ' + (si3+1) + '</span><span style="color:' + cat.color + '">' + dw + du + '</span><span>x</span><span>' + s.reps + 'rep</span><span style="color:#333">vol:' + vol + 'kg</span>';
+        html += '<button class="log-edit-btn" onclick="openEditSet(\'' + log.id + '\',event)">編集</button></div>';
+      }
+      if (log.note) html += '<div class="log-note">"' + log.note + '"</div>';
+      html += '<button class="log-del-btn" onclick="deleteLog(\'' + log.id + '\')">削除</button></div></div>';
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+function renderStats() {
+  var grouped = groupByDate(logs);
+  var totalVol = 0;
+  for (var i = 0; i < logs.length; i++) for (var j = 0; j < logs[i].sets.length; j++) totalVol += (parseFloat(logs[i].sets[j].weight) || 0) * (parseInt(logs[i].sets[j].reps) || 0);
+  var exCount = {};
+  for (var i2 = 0; i2 < logs.length; i2++) exCount[logs[i2].exercise] = (exCount[logs[i2].exercise] || 0) + 1;
+  var topEx = "—";
+  var topN = 0;
+  var exKeys = Object.keys(exCount);
+  for (var i3 = 0; i3 < exKeys.length; i3++) { if (exCount[exKeys[i3]] > topN) { topN = exCount[exKeys[i3]]; topEx = exKeys[i3].slice(0, 8); } }
+  var volStr = totalVol >= 1000 ? (totalVol / 1000).toFixed(1) + "t" : totalVol.toFixed(0) + "kg";
+  document.getElementById("stat-grid").innerHTML =
+    '<div class="stat-card"><div class="stat-label">総記録数</div><div class="stat-value">' + logs.length + '件</div></div>' +
+    '<div class="stat-card"><div class="stat-label">総ボリューム</div><div class="stat-value">' + volStr + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">最多種目</div><div class="stat-value">' + topEx + '</div></div>' +
+    '<div class="stat-card"><div class="stat-label">記録日数</div><div class="stat-value">' + Object.keys(grouped).length + '日</div></div>';
+  var maxByEx = {};
+  for (var i4 = 0; i4 < logs.length; i4++) {
+    var l = logs[i4];
+    var mx = {weight: 0}; for (var j2 = 0; j2 < l.sets.length; j2++) { if ((parseFloat(l.sets[j2].weight)||0) > (parseFloat(mx.weight)||0)) mx = l.sets[j2]; }
+    if (!maxByEx[l.exercise] || parseFloat(mx.weight) > parseFloat(maxByEx[l.exercise].weight)) maxByEx[l.exercise] = Object.assign({}, mx, {date: l.date, category: l.category});
+  }
+  var prEl = document.getElementById("pr-list");
+  var prKeys = Object.keys(maxByEx);
+  if (!prKeys.length) { prEl.innerHTML = '<div class="empty" style="padding:40px 0">NO DATA</div>'; return; }
+  var prHtml = "";
+  for (var i5 = 0; i5 < prKeys.length; i5++) {
+    var ex = prKeys[i5]; var data = maxByEx[ex];
+    var cat2 = CATS[data.category] || Object.values(CATS)[0];
+    var dispW = data.unit === "lbs" ? (parseFloat(data.weight) * KG_TO_LBS).toFixed(1) + "lbs" : parseFloat(data.weight).toFixed(1) + "kg";
+    prHtml += '<div class="pr-row"><span style="color:' + cat2.color + ';font-size:16px;margin-right:12px">' + cat2.icon + '</span>';
+    prHtml += '<div class="pr-info"><div class="pr-name">' + ex + '</div><div class="pr-date">' + new Date(data.date).toLocaleDateString("ja-JP") + ' · ' + data.reps + 'rep</div></div>';
+    prHtml += '<div class="pr-weight" style="color:' + cat2.color + '">' + dispW + '</div></div>';
+  }
+  prEl.innerHTML = prHtml;
+}
+function renderCustomTab() {
+  var list = allEx(customTabCat); var color = CATS[customTabCat].color;
+  var html = '<div style="font-size:10px;color:#333;letter-spacing:2px;margin-bottom:10px">☰ ドラッグで並び替え</div>';
+  for (var i = 0; i < list.length; i++) {
+    var ex = list[i]; var isMy = isCustomEx(customTabCat, ex);
+    html += '<div class="custom-item" draggable="true" ondragstart="dragSrcIdx=' + i + '" ondragenter="handleDragEnter(event,' + i + ')" ondragend="handleDragEnd()" ondragover="event.preventDefault()">';
+    html += '<span class="drag-handle">&#8942;&#8942;</span>';
+    if (!isMy) html += '<span class="default-tag">DEFAULT</span>';
+    html += '<span class="custom-name">' + ex + '</span>';
+    html += '<button class="custom-action-btn" style="border:1px solid ' + color + ';color:' + color + '" onclick="openRenameModal(\'' + customTabCat + '\',\'' + ex.replace(/'/g, "\\'") + '\')">名称変更</button>';
+    if (isMy) html += '<button class="custom-del-btn" onclick="openDeleteModal(\'' + customTabCat + '\',\'' + ex.replace(/'/g, "\\'") + '\')">x</button>';
+    else html += '<div style="width:30px"></div>';
+    html += '</div>';
+  }
+  document.getElementById("custom-list").innerHTML = html;
+}
+function renderCustomCatTabs() {
+  var html = "";
+  var keys = Object.keys(CATS);
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i]; var cat = CATS[key];
+    var cnt = allEx(key).filter(function(e) { return isCustomEx(key, e); }).length;
+    var on = key === customTabCat;
+    html += '<button class="cat-tab-btn" onclick="setCustomTabCat(\'' + key + '\')" style="background:' + (on ? cat.color + "20" : "#0D0D0D") + ';border-color:' + (on ? cat.color : "#1A1A1A") + ';color:' + (on ? cat.color : "#444") + '">';
+    html += cat.label + (cnt > 0 ? " (+" + cnt + ")" : "") + '</button>';
+  }
+  document.getElementById("custom-cat-tabs").innerHTML = html;
+}
+function updateVolume() {
+  var v = 0;
+  for (var i = 0; i < logs.length; i++) for (var j = 0; j < logs[i].sets.length; j++) v += (parseFloat(logs[i].sets[j].weight) || 0) * (parseInt(logs[i].sets[j].reps) || 0);
+  document.getElementById("vol-value").textContent = v >= 1000 ? (v / 1000).toFixed(1) + "t" : v.toFixed(0) + "kg";
+}
+function updateCustomBadge() {
+  var cnt = 0; var keys = Object.keys(CATS);
+  for (var i = 0; i < keys.length; i++) cnt += allEx(keys[i]).filter(function(e) { return isCustomEx(keys[i], e); }).length;
+  var badge = document.getElementById("custom-badge");
+  badge.style.display = cnt > 0 ? "inline" : "none"; badge.textContent = cnt;
+}
+function updateAddExBtn() {
+  var btn = document.getElementById("add-ex-btn"); var color = CATS[selCat].color;
+  btn.style.border = "1px solid " + color; btn.style.color = color;
+}
+function switchTab(tab) {
+  document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.toggle("active", b.dataset.tab === tab); });
+  document.querySelectorAll(".screen").forEach(function(s) { s.classList.toggle("active", s.id === "tab-" + tab); });
+}
+function selectCat(cat) { selCat = cat; selEx = allEx(cat)[0]; renderCatGrid(); renderExList(); updateAddExBtn(); }
+function selectEx(ex) { selEx = ex; renderExList(); }
+function addSet() { var u = sets.length ? sets[sets.length-1].unit : "kg"; sets.push({weight:"",reps:"",unit:u}); renderSets(); }
+function removeSet(i) { sets.splice(i, 1); renderSets(); }
+function setUnit(i, unit) { sets[i].unit = unit; renderSets(); }
+function saveWorkout() {
+  var valid = sets.filter(function(s) { return s.weight && s.reps; });
+  if (!valid.length) { showToast("重量と回数を入力してください"); return; }
+  logs.unshift({
+    id: Date.now().toString(), date: new Date().toISOString(),
+    category: selCat, exercise: selEx,
+    sets: valid.map(function(s) { return { weight: toKg(s.weight, s.unit).toFixed(2), displayWeight: s.weight, unit: s.unit, reps: s.reps }; }),
+    note: document.getElementById("note-input").value
+  });
+  sets = [{weight:"",reps:"",unit:valid[valid.length-1].unit||"kg"}];
+  document.getElementById("note-input").value = "";
+  scheduleSave(); renderAll(); showToast("✓ 保存しました");
+}
+function toggleLog(id) {
+  var detail = document.getElementById("detail-" + id); var toggle = document.getElementById("toggle-" + id);
+  var open = detail.classList.toggle("open"); toggle.innerHTML = open ? "&#9650;" : "&#9660;";
+}
+function deleteLog(id) { logs = logs.filter(function(l) { return l.id !== id; }); scheduleSave(); renderAll(); showToast("記録を削除しました"); }
+function openEditSet(logId, e) {
+  e.stopPropagation();
+  var log = null; for (var i = 0; i < logs.length; i++) { if (logs[i].id === logId) { log = logs[i]; break; } }
+  if (!log) return;
+  editSetTarget = logId;
+  editSetData = log.sets.map(function(s) { return Object.assign({}, s); });
+  document.getElementById("editset-title").textContent = log.exercise;
+  renderEditSetRows();
+  document.getElementById("modal-editset").classList.add("open");
+}
+function renderEditSetRows() {
+  var html = "";
+  for (var i = 0; i < editSetData.length; i++) {
+    var set = editSetData[i];
+    var dw = set.editWeight !== undefined ? set.editWeight : (set.displayWeight || fmtW(set.weight, set.unit || "kg"));
+    var unit = set.unit || "kg";
+    html += '<div class="edit-set-row"><div class="edit-set-row-top">';
+    html += '<div class="edit-set-num">SET ' + (i+1) + '</div>';
+    html += '<input class="edit-set-input" type="number" value="' + dw + '" oninput="editSetData[' + i + '].editWeight=this.value" placeholder="重量">';
+    html += '<input class="edit-set-input" type="number" value="' + set.reps + '" oninput="editSetData[' + i + '].reps=this.value" placeholder="回数" style="max-width:64px">';
+    html += '</div><div class="edit-unit-toggle">';
+    html += '<button class="edit-unit-btn' + (unit === "kg" ? " active" : "") + '" onclick="editSetUnitOnly(' + i + ',\'kg\')">kg</button>';
+    html += '<button class="edit-unit-btn' + (unit === "lbs" ? " active" : "") + '" onclick="editSetUnitOnly(' + i + ',\'lbs\')">lbs</button>';
+    html += '</div></div>';
+  }
+  document.getElementById("editset-rows").innerHTML = html;
+}
+function editSetUnitOnly(i, unit) { editSetData[i].unit = unit; renderEditSetRows(); }
+function confirmEditSet() {
+  var idx = -1; for (var i = 0; i < logs.length; i++) { if (logs[i].id === editSetTarget) { idx = i; break; } }
+  if (idx === -1) return;
+  logs[idx].sets = editSetData.map(function(s) {
+    var inputW = s.editWeight !== undefined ? s.editWeight : (s.displayWeight || fmtW(s.weight, s.unit || "kg"));
+    var unit = s.unit || "kg";
+    return { weight: toKg(inputW, unit).toFixed(2), displayWeight: String(inputW), unit: unit, reps: s.reps };
+  });
+  closeModal("editset"); scheduleSave(); renderAll(); showToast("✓ 記録を修正しました");
+}
+function setCustomTabCat(cat) { customTabCat = cat; renderCustomCatTabs(); renderCustomTab(); }
+function handleDragEnter(e, toIdx) {
+  e.preventDefault(); if (dragSrcIdx === null || dragSrcIdx === toIdx) return;
+  var list = allEx(customTabCat);
+  var moved = list.splice(dragSrcIdx, 1)[0]; list.splice(toIdx, 0, moved);
+  exOrder[customTabCat] = list; dragSrcIdx = toIdx; renderCustomTab();
+}
+function handleDragEnd() { dragSrcIdx = null; scheduleSave(); }
+function openAddModal(fromCustom) {
+  addModalFromCustom = !!fromCustom; addModalCat = fromCustom ? customTabCat : selCat;
+  document.getElementById("add-name-input").value = ""; renderAddCatGrid();
+  document.getElementById("modal-add").classList.add("open");
+  setTimeout(function() { document.getElementById("add-name-input").focus(); }, 100);
+}
+function renderAddCatGrid() {
+  var html = ""; var keys = Object.keys(CATS);
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i]; var cat = CATS[key]; var on = key === addModalCat;
+    html += '<button class="modal-cat-btn" onclick="addModalCat=\'' + key + '\';renderAddCatGrid()" style="background:' + (on ? cat.color + "20" : "#0D0D0D") + ';border-color:' + (on ? cat.color : "#222") + ';color:' + (on ? cat.color : "#444") + '">';
+    html += '<div style="font-size:14px;margin-bottom:2px">' + cat.icon + '</div>' + cat.label + '</button>';
+  }
+  document.getElementById("add-cat-grid").innerHTML = html;
+}
+function confirmAdd() {
+  var name = document.getElementById("add-name-input").value.trim();
+  if (!name) { showToast("種目名を入力してください"); return; }
+  if (allEx(addModalCat).indexOf(name) !== -1) { showToast("すでに登録済みです"); return; }
+  exOrder[addModalCat] = allEx(addModalCat).concat([name]);
+  closeModal("add"); selCat = addModalCat; selEx = name;
+  scheduleSave(); renderAll(); showToast("✓「" + name + "」を追加しました");
+  if (!addModalFromCustom) switchTab("log");
+}
+function openRenameModal(category, oldName) {
+  renameTarget = {category: category, oldName: oldName};
+  document.getElementById("rename-old").textContent = "「" + oldName + "」";
+  document.getElementById("rename-input").value = oldName;
+  document.getElementById("modal-rename").classList.add("open");
+  setTimeout(function() { document.getElementById("rename-input").focus(); }, 100);
+}
+function confirmRename() {
+  var name = document.getElementById("rename-input").value.trim();
+  if (!name) { showToast("種目名を入力してください"); return; }
+  var category = renameTarget.category; var oldName = renameTarget.oldName;
+  if (name === oldName) { closeModal("rename"); return; }
+  if (allEx(category).indexOf(name) !== -1) { showToast("同じ名前がすでにあります"); return; }
+  exOrder[category] = allEx(category).map(function(e) { return e === oldName ? name : e; });
+  logs = logs.map(function(l) { return l.category === category && l.exercise === oldName ? Object.assign({}, l, {exercise: name}) : l; });
+  if (selCat === category && selEx === oldName) selEx = name;
+  closeModal("rename"); scheduleSave(); renderAll(); showToast("✓「" + oldName + "」→「" + name + "」");
+}
+function openDeleteModal(category, name) {
+  deleteTarget = {category: category, name: name};
+  document.getElementById("delete-name").textContent = "「" + name + "」";
+  document.getElementById("modal-delete").classList.add("open");
+}
+function confirmDelete() {
+  var category = deleteTarget.category; var name = deleteTarget.name;
+  exOrder[category] = allEx(category).filter(function(e) { return e !== name; });
+  if (selCat === category && selEx === name) selEx = allEx(category)[0];
+  closeModal("delete"); scheduleSave(); renderAll(); showToast("「" + name + "」を削除しました");
+}
+function closeModal(id) { document.getElementById("modal-" + id).classList.remove("open"); }
+function toggleTimer() { timerOpen = !timerOpen; document.getElementById("timer-panel").classList.toggle("open", timerOpen); }
+function setTimerPreset(sec) {
+  if (timerRunning) return; timerDuration = sec; timerRemaining = sec;
+  document.querySelectorAll(".timer-preset-btn").forEach(function(b) {
+    var t = b.textContent; var s = parseInt(t.split(":")[0]) * 60 + parseInt(t.split(":")[1] || 0);
+    b.classList.toggle("active", s === sec);
+  });
+  updateTimerDisplay();
+}
+function toggleTimerRun() { if (timerRunning) pauseTimer(); else startTimer(); }
+function startTimer() {
+  if (timerRemaining <= 0) timerRemaining = timerDuration;
+  timerRunning = true; document.getElementById("timer-start-btn").textContent = "一時停止";
+  document.getElementById("timer-display").classList.remove("done");
+  timerInterval = setInterval(function() {
+    timerRemaining--; updateTimerDisplay();
+    if (timerRemaining <= 0) timerFinished();
+  }, 1000);
+}
+function pauseTimer() { timerRunning = false; clearInterval(timerInterval); document.getElementById("timer-start-btn").textContent = "スタート"; }
+function resetTimer() { pauseTimer(); timerRemaining = timerDuration; document.getElementById("timer-display").classList.remove("done"); updateTimerDisplay(); }
+function timerFinished() {
+  pauseTimer(); document.getElementById("timer-display").classList.add("done");
+  document.getElementById("timer-display").textContent = "完了！";
+  document.getElementById("timer-start-btn").textContent = "スタート";
+  if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
+  showToast("インターバル終了！"); if (!timerOpen) { timerOpen = true; document.getElementById("timer-panel").classList.add("open"); }
+}
+function updateTimerDisplay() {
+  var m = Math.floor(timerRemaining / 60); var s = timerRemaining % 60;
+  document.getElementById("timer-display").textContent = m + ":" + String(s).padStart(2, "0");
+}
+function copySummaryForClaude() {
+  var now = new Date(); var summary = [];
+  summary.push("=== WORKOUT LOGGER サマリー ===");
+  summary.push("生成日時: " + now.toLocaleDateString("ja-JP", {year:"numeric",month:"long",day:"numeric"}));
+  summary.push("");
+  var msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  summary.push("【直近4週間のトレーニング頻度】");
+  for (var w = 0; w < 4; w++) {
+    var end = new Date(now - w * msPerWeek); var start = new Date(now - (w + 1) * msPerWeek);
+    var days = {}; var exes = {};
+    for (var i = 0; i < logs.length; i++) {
+      var d = new Date(logs[i].date);
+      if (d >= start && d < end) { days[d.toLocaleDateString("ja-JP")] = 1; exes[logs[i].exercise] = 1; }
+    }
+    var label = w === 0 ? "今週" : w === 1 ? "先週" : (w + 1) + "週前";
+    var dCnt = Object.keys(days).length; var eCnt = Object.keys(exes).length;
+    summary.push(label + ": " + dCnt + "回 (" + Object.keys(exes).slice(0, 4).join("、") + (eCnt > 4 ? "他" : "") + ")");
+  }
+  summary.push("");
+  var maxByEx = {};
+  for (var i2 = 0; i2 < logs.length; i2++) {
+    var l = logs[i2]; var mx = {weight: 0};
+    for (var j = 0; j < l.sets.length; j++) { if ((parseFloat(l.sets[j].weight)||0) > (parseFloat(mx.weight)||0)) mx = l.sets[j]; }
+    if (!maxByEx[l.exercise] || parseFloat(mx.weight) > parseFloat(maxByEx[l.exercise].weight)) maxByEx[l.exercise] = Object.assign({}, mx, {date: l.date, category: l.category});
+  }
+  summary.push("【種目別MAX重量（PR）】");
+  var mKeys = Object.keys(maxByEx);
+  for (var i3 = 0; i3 < mKeys.length; i3++) {
+    var ex = mKeys[i3]; var data = maxByEx[ex];
+    var unit = data.unit || "kg";
+    var dispW = unit === "lbs" ? (parseFloat(data.weight) * KG_TO_LBS).toFixed(1) + "lbs" : parseFloat(data.weight).toFixed(1) + "kg";
+    var cat3 = CATS[data.category] || Object.values(CATS)[0];
+    summary.push(cat3.label + " / " + ex + ": " + dispW + " x " + data.reps + "rep (" + new Date(data.date).toLocaleDateString("ja-JP") + ")");
+  }
+  summary.push("");
+  var recentByEx = {};
+  for (var i4 = 0; i4 < logs.length; i4++) {
+    var l2 = logs[i4];
+    if (!recentByEx[l2.exercise]) recentByEx[l2.exercise] = [];
+    if (recentByEx[l2.exercise].length < 3) recentByEx[l2.exercise].push(l2);
+  }
+  summary.push("【直近の記録（種目ごと最新3回）】");
+  var rKeys = Object.keys(recentByEx);
+  for (var i5 = 0; i5 < rKeys.length; i5++) {
+    var exName = rKeys[i5]; var recs = recentByEx[exName];
+    summary.push("▼ " + exName);
+    for (var ri = 0; ri < recs.length; ri++) {
+      var r = recs[ri]; var setStr = "";
+      for (var si = 0; si < r.sets.length; si++) {
+        var ss = r.sets[si]; var u = ss.unit || "kg";
+        var wStr = u === "lbs" ? (parseFloat(ss.weight) * KG_TO_LBS).toFixed(1) + "lbs" : parseFloat(ss.weight).toFixed(1) + "kg";
+        if (si > 0) setStr += " / "; setStr += wStr + "x" + ss.reps;
+      }
+      summary.push("  " + new Date(r.date).toLocaleDateString("ja-JP") + ": " + setStr);
+    }
+  }
+  summary.push("");
+  var lastWeekStart = new Date(now - msPerWeek); var lastWeekVol = 0;
+  for (var i6 = 0; i6 < logs.length; i6++) {
+    if (new Date(logs[i6].date) >= lastWeekStart) {
+      for (var j2 = 0; j2 < logs[i6].sets.length; j2++) lastWeekVol += (parseFloat(logs[i6].sets[j2].weight)||0) * (parseInt(logs[i6].sets[j2].reps)||0);
+    }
+  }
+  summary.push("【直近7日間の総ボリューム】 " + (lastWeekVol >= 1000 ? (lastWeekVol / 1000).toFixed(1) + "t" : lastWeekVol.toFixed(0) + "kg"));
+  summary.push(""); summary.push("=== 以上 ===");
+  var text = summary.join("\n");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { showToast("コピーしました"); }).catch(function() { fallbackCopy(text); });
+  } else { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  var ta = document.createElement("textarea"); ta.value = text;
+  document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+  document.body.removeChild(ta); showToast("コピーしました");
+}
+function showToast(msg) {
+  var el = document.getElementById("toast"); el.textContent = msg; el.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(function() { el.style.display = "none"; }, 2500);
+}
+document.querySelectorAll(".tab-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() { switchTab(btn.dataset.tab); });
+});
+init();
+</script>
+</body>
+</html>
